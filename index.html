@@ -1,0 +1,56 @@
+<!DOCTYPE html>  
+<html>  
+  <head>  <!-- www.techstrikers.com -->
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">  
+    <meta charset="utf-8">  
+    <title>Add Complex Polylines on onClick</title>  
+    <style>  
+      html, body {  
+        height: 100%;  
+        margin: 0;  
+        padding: 0;  
+      }  
+      #map {  
+        height: 99%;
+        width: 99%;
+      }  
+    </style>  
+        <script async defer  
+        src="https://maps.googleapis.com/maps/api/js?signed_in=true&callback=initMap"></script>  
+         <script>  
+
+var poly;  
+var map;  
+  
+function initMap() {  
+ var lat_lng = {lat: 22.08672, lng: 79.42444};     
+  map = new google.maps.Map(document.getElementById('map'), {      
+    zoom: 6,      
+    center: lat_lng,      
+    mapTypeId: google.maps.MapTypeId.TERRAIN      
+  });  
+  
+  poly = new google.maps.Polyline({  
+    strokeColor: '#FF0000',  
+    strokeOpacity: 1.0,  
+    strokeWeight: 3  
+  });  
+  poly.setMap(map);  
+  
+  // Add a listener for the click event  
+  map.addListener('click', addLatLng);  
+}  
+  
+// Add a new point to the Polyline.  
+function addLatLng(event) {  
+  var path = poly.getPath();    
+  path.push(event.latLng);
+  console.log(path)
+}  
+    </script>  
+  </head>  
+  <body>  
+    <div id="map"></div>  
+  </body>  
+</html>  
+
