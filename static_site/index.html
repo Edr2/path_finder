@@ -1,0 +1,92 @@
+<!DOCTYPE html>  
+<html>  
+  <head>  <!-- www.techstrikers.com -->
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">  
+    <meta charset="utf-8">  
+    <title>Add Complex Polylines on onClick</title>  
+    <style>  
+      html, body {  
+        height: 100%;  
+        margin: 0;  
+        padding: 0;  
+      }  
+      #map {  
+        height: 400px;
+        width: 700px;
+      }
+      #right_menu {
+        height: 100px;
+        width: 500px;
+      }
+    </style>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?signed_in=true&callback=initMap"></script>  
+    <script>  
+
+const Url='http://0.0.0.0:5000';
+axios.get(Url, { crossdomain: true })
+.then(data=>buildRoadList(data.data))
+.catch(err=>console.log(err))
+
+
+function buildRoadList(roads){
+  var myParent = document.getElementById("roads");
+
+  //Create and append select list
+  var selectList = document.createElement("select");
+  selectList.id = "mySelect";
+  myParent.appendChild(selectList);
+
+  //Create and append the options
+  for (var i = 0; i < roads.length; i++) {
+      var option = document.createElement("option");
+      option.value = roads[i];
+      option.text = roads[i];
+      selectList.appendChild(option);
+  }
+}
+
+
+var poly;  
+var map;  
+  
+function initMap() {  
+ var lat_lng = {lat: 32.07730740130677, lng: 34.7690084852025};
+  map = new google.maps.Map(document.getElementById('map'), {      
+    zoom: 13,
+    center: lat_lng,      
+    mapTypeId: google.maps.MapTypeId.TERRAIN      
+  });  
+  
+  poly = new google.maps.Polyline({  
+    strokeColor: '#FF0000',  
+    strokeOpacity: 1.0,  
+    strokeWeight: 3  
+  });  
+  poly.setMap(map);
+  
+  // Add a listener for the click event  
+  map.addListener('click', addLatLng);  
+}  
+  
+// Add a new point to the Polyline.  
+function addLatLng(event) {  
+  var path = poly.getPath();    
+  path.push(event.latLng);
+  console.log(path)
+}
+
+function newRoute(){
+  poly.setPath([])
+}
+    </script>  
+  </head>  
+  <body>  
+    <div id="map"></div>
+    <div id="right_menu">
+      <a id="new_route" onclick="newRoute()">New Route</a>
+    </div>
+    <div id="roads"></div>
+  </body>  
+</html>  
+

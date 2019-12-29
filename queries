@@ -1,0 +1,21 @@
+ALTER TABLE lines ADD COLUMN geom geometry(Point, 4326);
+
+
+truncate points;
+delete from points;
+
+SELECT event_name, timepoint, ST_MakeLine(geom ORDER BY timepoint) as geom from points
+group by event_name, timepoint
+
+
+SELECT event_name, num, ST_MAKELINE(geom,geom2) FROM (
+  SELECT event_name, row_number() OVER w AS num, geom, lead(geom) OVER w AS geom2
+  FROM points WINDOW w AS (PARTITION BY event_name ORDER BY timepoint) ) as q
+WHERE geom2 IS NOT NULL;
+
+
+
+# to create one LINESTRING from POINTS order by timepoint
+SELECT gps.event_name, ST_MakeLine(gps.geom ORDER BY timepoint) AS newgeom
+FROM points AS gps
+GROUP BY gps.event_name;
