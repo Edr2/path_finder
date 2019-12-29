@@ -1,5 +1,7 @@
 ALTER TABLE lines ADD COLUMN geom geometry(Point, 4326);
 
+ALTER DATABASE gis OWNER TO docker;
+
 
 truncate points;
 delete from points;
@@ -14,8 +16,15 @@ SELECT event_name, num, ST_MAKELINE(geom,geom2) FROM (
 WHERE geom2 IS NOT NULL;
 
 
-
-# to create one LINESTRING from POINTS order by timepoint
-SELECT gps.event_name, ST_MakeLine(gps.geom ORDER BY timepoint) AS newgeom
+-- to create one LINESTRING from POINTS order by timepoint
+SELECT gps.event_name, ST_MakeLine(gps.geom ORDER BY timepoint) AS newgeom, ST_Length(newgeom) as lenght
 FROM points AS gps
 GROUP BY gps.event_name;
+
+
+-- get all coordinates from LINESTRING
+SELECT gg.event_name, ST_AsKML(gg.newgeom) from (
+	SELECT event_name, ST_MakeLine(gps.geom ORDER BY timepoint) AS newgeom
+	FROM points AS gps
+	GROUP BY gps.event_name
+) as gg
