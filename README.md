@@ -1,6 +1,6 @@
 # path_finder
 
-docker-compouse up
+docker-compose up
 
 
 python commands/csv_to_db_points.py
